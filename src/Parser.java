@@ -215,7 +215,7 @@ public class Parser {
     }
     
     public static void action(String cell){ 
-        //System.out.println(cell); 
+        System.out.println(cell); 
         ParsingGoTo row = new ParsingGoTo();
         int state;
         kNode temp;
