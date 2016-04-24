@@ -279,9 +279,9 @@ public class Parser {
                             gotoStack.pop();                        
                         }
                         state = Integer.parseInt((String) gotoStack.peek());
+                        System.out.println("Stack Peek: " + state);
                         row = ParsingTable.parsingGoToTable.get(state);
                         tokenStack.push(parent);
-                        //System.out.println(state);
                         for(int i=0; i<24; i++){    
                             if(row.var[i] == p.var.toString()){
                                 System.out.println("Push State#" + row.entry[i]);
