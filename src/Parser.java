@@ -91,7 +91,7 @@ public class Parser {
     
     public static void main(String[] args) throws IOException, FileNotFoundException {
         Token tok = new Token(null, "");
-        LexAnalyzer lex = new LexAnalyzer("E:\\Paolo\\UST\\4th year\\2nd sem\\CS 105\\Sample Programs\\samp2.txt");
+        LexAnalyzer lex = new LexAnalyzer("E:\\Paolo\\UST\\4th year\\2nd sem\\CS 105\\Sample Programs\\samp1.txt");
         lex.getTotalChar();
         System.out.println("-----Lexical Analyzer-----");
         do{
@@ -281,6 +281,7 @@ public class Parser {
                         state = Integer.parseInt((String) gotoStack.peek());
                         row = ParsingTable.parsingGoToTable.get(state);
                         tokenStack.push(parent);
+                        //System.out.println(state);
                         for(int i=0; i<24; i++){    
                             if(row.var[i] == p.var.toString()){
                                 System.out.println("Push State#" + row.entry[i]);

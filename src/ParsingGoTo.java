@@ -33,7 +33,7 @@ public class ParsingGoTo {
         var[9] = "for_loop";
         var[10] = "while_loop";
         var[11] = "read";
-        var[12] = "while";
+        var[12] = "write";
         var[13] = "expr";
         var[14] = "exprt";
         var[15] = "exprt1";
