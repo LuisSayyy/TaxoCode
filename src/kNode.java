@@ -13,13 +13,13 @@ public class kNode {
     
     public kNode(){
         info = null;
-        token = null;
+        token = new Token(null,"");
         next = child = null;
     }
     
     public kNode(String information){   //for variable nodes
         info = information;
-        token = null;
+        token = new Token(null,"");
         next = prev = child = null;
     }
     
@@ -32,6 +32,7 @@ public class kNode {
     public kNode(String information, kNode firstChild){
         info = information;
         child = firstChild;
+        token = new Token(null,"");
         next = prev = null;
     } 
 }

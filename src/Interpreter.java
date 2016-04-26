@@ -14,6 +14,7 @@ public class Interpreter {
     public static char in3 = ' ';
     public static boolean in4;
     public static String avalue = "";
+    public static int val;
     
     public static void main(kTree pT) {
         parseTree = pT;
@@ -66,9 +67,8 @@ public class Interpreter {
     
     public static void assign(kNode a){
         kNode id = a.child;
-        kNode assignment = a.child.next.next;
+        kNode assignment = id.next.next;
 //        System.out.println(assignment.token.lexeme);
-        //System.out.println(value.info);
         expr(assignment);
         id.token.value = avalue;
         System.out.println("The value of " + id.token.lexeme + " is " + id.token.value);
@@ -242,7 +242,22 @@ public class Interpreter {
         kNode exprn = en.child;
         if(exprn.info == "exprn"){
             exprn(exprn);
+            //System.out.println(avalue);
+            exprn.token.value = avalue;
             exprnterm(exprn.next.next);
+            exprn.next.next.token.value = avalue;
+            System.out.println("OP: " + exprn.next.info);
+            switch(exprn.next.info){
+                case "[PLUS]":
+                    val = Integer.parseInt(exprn.token.value) + Integer.parseInt(exprn.next.next.token.value);
+                    avalue = Integer.toString(val);
+                    break;
+                case "[MINUS]":
+                    //System.out.println(exprn.token.value + "  " + exprn.next.next.token.value);
+                    val = Integer.parseInt(exprn.token.value) - Integer.parseInt(exprn.next.next.token.value);
+                    avalue = Integer.toString(val);
+                    break;
+            }
         }
         else{
             exprnterm(exprn);
@@ -253,7 +268,11 @@ public class Interpreter {
         kNode exprnterm = ent.child;
         if(exprnterm.info == "exprnterm"){
             exprnterm(exprnterm);
+            exprnterm.token.value = avalue;
             exprnfactor(exprnterm.next.next);
+            exprnterm.next.next.token.value = avalue;
+            val = Integer.parseInt(exprnterm.token.value) * Integer.parseInt(exprnterm.next.next.token.value);
+            avalue = Integer.toString(val);
         }
         else{
             exprnfactor(exprnterm);
@@ -263,8 +282,7 @@ public class Interpreter {
     public static void exprnfactor(kNode enf){
         kNode exprnfactor = enf.child;
         if(exprnfactor.info == "exprnfactor"){
-            exprnterm(exprnfactor);
-            unit(exprnfactor.next.next);
+            expr(exprnfactor.next);
         }
         else{
             unit(exprnfactor);
@@ -273,16 +291,26 @@ public class Interpreter {
     
     public static void unit(kNode u){
         kNode cons = u.child;
-        Token tok;
+        Token tok = new Token(null, "");
         switch(cons.info){
             case "[ID]":
+                tok = Parser.idTable.get(cons.token.lexeme);
+//              System.out.println("Value: " + tok.value);
+                if(tok.value != "" || tok.value != null){
+                    avalue = tok.value;
+                }
+                else{
+                    cons.token.value = cons.token.lexeme;
+                    avalue = cons.token.value;
+                }
+                break;
             case "[NUMCONST]":
             case "[STRLIT]":
             case "[CHARLIT]":
             case "[PREDATOR]":
             case "[PREY]":
-                tok = Parser.idTable.get(cons.token.lexeme);
-                if(tok.value != ""){
+                tok.value = cons.token.lexeme;
+                if(tok.value != "" || tok.value != null){
                     avalue = tok.value;
                 }
                 else{
