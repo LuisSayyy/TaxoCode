@@ -13,6 +13,7 @@ public class Interpreter {
     public static String in2 = "";
     public static char in3 = ' ';
     public static boolean in4;
+    public static String avalue = "";
     
     public static void main(kTree pT) {
         parseTree = pT;
@@ -64,11 +65,13 @@ public class Interpreter {
     }
     
     public static void assign(kNode a){
-        kNode assignment = a.child;
-        kNode value = assignment.next.next;
-        //System.out.println(assignment.token.lexeme);
+        kNode id = a.child;
+        kNode assignment = a.child.next.next;
+//        System.out.println(assignment.token.lexeme);
         //System.out.println(value.info);
-        expr(value);
+        expr(assignment);
+        id.token.value = avalue;
+        System.out.println("The value of " + id.token.lexeme + " is " + id.token.value);
     }
     
     public static void cond(kNode c){
@@ -100,7 +103,7 @@ public class Interpreter {
                 input.token.value = Character.toString(in3);
                 break;
             case "REPTILE":
-                in2 = s.next();
+                in2 = s.nextLine();
                 input.token.value = in2;
                 break;
             case "KILLER":
@@ -108,11 +111,15 @@ public class Interpreter {
                 input.token.value = Boolean.toString(in4);
                 break;
         }
-        System.out.println("The value of " + input.token.lexeme + " is " + input.token.value);
+        //System.out.println("The value of " + input.token.lexeme + " is " + input.token.value);
     }
     
     public static void write(kNode w){
-        kNode output = w.child;
+        kNode id = w.child;
+        kNode output = w.child.next.next;
+        expr(output);
+        id.token.value = avalue;
+        System.out.println(id.token.value);
         
     }
     
@@ -151,6 +158,138 @@ public class Interpreter {
     }
     
     public static void expr(kNode e){
-        
+        kNode expr = e.child;
+        //System.out.println(expr.info);
+        if(expr.info == "expr"){
+            expr(expr);
+            exprt(expr.next.next);
+        }
+        else{
+            exprt(expr);
+        }
+    }
+    
+    public static void exprt(kNode et){
+        kNode exprt = et.child;
+        if(exprt.info == "exprt"){
+            exprt(exprt);
+            exprt1(exprt.next.next);
+        }
+        else{
+            exprt1(exprt);
+        }
+    }
+    
+    public static void exprt1(kNode e1){
+        kNode exprt1 = e1.child;
+        if(exprt1.info == "exprt1"){
+            exprt1(exprt1);
+            exprt2(exprt1.next.next);
+        }
+        else{
+            exprt2(exprt1);
+        }
+    }
+    
+    public static void exprt2(kNode e2){
+        kNode exprt2 = e2.child;
+        if(exprt2.info == "exprt2"){
+            exprt2(exprt2);
+            exprt3(exprt2.next.next);
+        }
+        else{
+            exprt3(exprt2);
+        }
+    }
+    
+    public static void exprt3(kNode e3){
+        kNode exprt3 = e3.child;
+        if(exprt3.info == "exprt3"){
+            exprt3(exprt3);
+            exprt4(exprt3.next.next);
+        }
+        else{
+            exprt4(exprt3);
+        }
+    }
+    
+    public static void exprt4(kNode e4){
+        kNode exprt4 = e4.child;
+        if(exprt4.info == "exprt4"){
+            exprt4(exprt4);
+            exprt5(exprt4.next.next);
+        }
+        else if(exprt4.info == "[NOT]"){
+            exprt4(exprt4.next);
+        }
+        else{
+            exprt5(exprt4);
+        }
+    }
+    
+    public static void exprt5(kNode e5){
+        kNode exprt5 = e5.child;
+        if(exprt5.info == "exprt5"){
+            exprt5(exprt5);
+            exprn(exprt5.next.next);
+        }
+        else{
+            exprn(exprt5);
+        }
+    }
+    
+    public static void exprn(kNode en){
+        kNode exprn = en.child;
+        if(exprn.info == "exprn"){
+            exprn(exprn);
+            exprnterm(exprn.next.next);
+        }
+        else{
+            exprnterm(exprn);
+        }
+    }
+    
+    public static void exprnterm(kNode ent){
+        kNode exprnterm = ent.child;
+        if(exprnterm.info == "exprnterm"){
+            exprnterm(exprnterm);
+            exprnfactor(exprnterm.next.next);
+        }
+        else{
+            exprnfactor(exprnterm);
+        }
+    }
+    
+    public static void exprnfactor(kNode enf){
+        kNode exprnfactor = enf.child;
+        if(exprnfactor.info == "exprnfactor"){
+            exprnterm(exprnfactor);
+            unit(exprnfactor.next.next);
+        }
+        else{
+            unit(exprnfactor);
+        }
+    }
+    
+    public static void unit(kNode u){
+        kNode cons = u.child;
+        Token tok;
+        switch(cons.info){
+            case "[ID]":
+            case "[NUMCONST]":
+            case "[STRLIT]":
+            case "[CHARLIT]":
+            case "[PREDATOR]":
+            case "[PREY]":
+                tok = Parser.idTable.get(cons.token.lexeme);
+                if(tok.value != ""){
+                    avalue = tok.value;
+                }
+                else{
+                    cons.token.value = cons.token.lexeme;
+                    avalue = cons.token.value;
+                }
+                break;
+        }
     }
 }
