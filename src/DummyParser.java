@@ -12,19 +12,19 @@ public class DummyParser {
     
     public static void main(String[] args) throws IOException, FileNotFoundException {
         Token tok;
-        LexAnalyzer lex = new LexAnalyzer("E:\\Paolo\\UST\\4th year\\2nd sem\\CS 105\\Sample Programs\\test.txt");
+        LexAnalyzer lex = new LexAnalyzer("E:\\Paolo\\UST\\4th year\\2nd sem\\CS 105\\Sample Programs\\fib.txt");
         lex.getTotalChar();
         System.out.println("-----Lexical Analyzer-----");
         do{
             String token = lex.getTokenType();
             switch(token){
                 case "Keyword":
-                    if(lex.rwTable.get(lex.strBuffer) != null){
-                        tok = lex.rwTable.get(lex.strBuffer);
-                        if(tok.lexeme == "THE"){
+                   if(lex.rwTable.get(lex.strBuffer) != null){
+                        if(lex.rwTable.get(lex.strBuffer).lexeme == "THE"){
                             continue;
                         }
                         else{
+                            tok = lex.rwTable.get(lex.strBuffer);
                             System.out.format(tok.toString() + "\n");
                         }
                     }

@@ -11,8 +11,8 @@ import java.util.Stack;
  */
 public class Parser {
     public static HashMap<String, Token> idTable = new HashMap();
-    public static ArrayList<String> tokens = new ArrayList<String>(); 
-    public static String curr_token;
+    public static ArrayList<Token> tokens = new ArrayList<Token>(); 
+    public static Token curr_token;
     public static Stack tokenStack = new Stack();
     public static Stack gotoStack = new Stack();
     public static int i = 0;
@@ -91,7 +91,7 @@ public class Parser {
     
     public static void main(String[] args) throws IOException, FileNotFoundException {
         Token tok = new Token(null, "");
-        LexAnalyzer lex = new LexAnalyzer("E:\\Paolo\\UST\\4th year\\2nd sem\\CS 105\\Sample Programs\\samp1.txt");
+        LexAnalyzer lex = new LexAnalyzer("E:\\Paolo\\UST\\4th year\\2nd sem\\CS 105\\Sample Programs\\semantic.txt");
         lex.getTotalChar();
         System.out.println("-----Lexical Analyzer-----");
         do{
@@ -99,11 +99,11 @@ public class Parser {
             switch(token){
                 case "Keyword":
                     if(lex.rwTable.get(lex.strBuffer) != null){
-                        tok = lex.rwTable.get(lex.strBuffer);
-                        if(tok.lexeme == "THE"){
+                        if(lex.rwTable.get(lex.strBuffer).lexeme == "THE"){
                             continue;
                         }
                         else{
+                            tok = lex.rwTable.get(lex.strBuffer);
                             System.out.format(tok.toString() + "\n");
                         }
                     }
@@ -140,13 +140,13 @@ public class Parser {
                     System.out.println("ERROR -- Invalid Token (Line: " + lex.row + " Col: " + lex.col + ")");
                     break;
             }
-            tokens.add(tok.getTokenKind());
+            tokens.add(tok);
         } while(lex.i != lex.totalCharacters);
         System.out.println("----Lexical Analysis Complete----\n");
         
         
         System.out.println("---------Syntax Analyzer---------");
-        tokens.add("[$]");
+        tokens.add(new Token(TokenNames.$, "$"));
         addProductions();
         ParsingTable.loadTable();
         tokenStack.push("$");
@@ -155,12 +155,12 @@ public class Parser {
             int curr_state = Integer.parseInt(gotoStack.peek().toString());
             ParsingTokens row = ParsingTable.parsingTokTable.get(curr_state);
             curr_token = getNextToken();
-            node = new kNode(curr_token);
+            node = new kNode(curr_token.getTokenKind(), curr_token);
             
             System.out.println("Top of Stack: " + curr_state);
-            System.out.println("Lookahead: " + curr_token);
+            System.out.println("Lookahead: " + curr_token.getTokenKind());
             
-                switch(curr_token){
+                switch(curr_token.getTokenKind()){
                     case "[KINGDOM]": action(row.entry[0]); break;
                     case "[ENDKINGDOM]": action(row.entry[1]); break;
                     case "[FISH]": action(row.entry[2]); break;
@@ -210,8 +210,12 @@ public class Parser {
         tree.makeRoot(parent);
         if(!err_flag){
             System.out.println("Generated Parse Tree: \n" + tree.toString());
-            System.out.println("-----Syntax Analysis Complete----");
+            System.out.println("-----Syntax Analysis Complete----\n");
         }
+        
+        System.out.println("--------Semantics Analyzer-------");
+            Interpreter.main(tree);
+        System.out.println("-----Semantics Analysis Complete----");
     }
     
     public static void action(String cell){ 
@@ -300,7 +304,7 @@ public class Parser {
         System.out.println("");
     }
     
-    public static String getNextToken(){
+    public static Token getNextToken(){
         return tokens.get(i);
     }
     

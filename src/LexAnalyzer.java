@@ -220,7 +220,7 @@ public class LexAnalyzer {
                             storeChar();
                             incIndex();
                         }
-                        else if(space.indexOf(c) >= 0 || c == '\n' || c == '\t' || c == '\r' || c == '{' || c == '(' ||c == (char) -1){
+                        else if(space.indexOf(c) >= 0 || c == '\n' || c == '\t' || c == '\r' || c == '{' || c == '(' ||c == (char) -1 || c == ';'){
                             stateKW = "Keyword";
                         }
                         else{

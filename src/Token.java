@@ -5,11 +5,15 @@
  */
 public class Token {
     public TokenNames kind;
+    public String dtype;
+    public String value;
     public String lexeme;
     
     public Token(TokenNames k, String l){
         kind = k;
         lexeme = l;
+        value = "";
+        dtype = "";
     }
     
     public String toString(){
@@ -29,6 +33,6 @@ enum TokenNames {
     EQUALS, NEQUALS, GTHAN, LTHAN, GETHAN, LETHAN, AND, OR, NOT,
     NAND, NOR, COMMA, EOS, CONCAT, MULT, PLUS, MINUS,
     LPAREN, RPAREN, LCURLY, RCURLY, THE, WITH, UNTIL, CONSTANT, ID,
-    STRLIT, NUMCONST, CHARLIT
+    STRLIT, NUMCONST, CHARLIT, $
     
 }
