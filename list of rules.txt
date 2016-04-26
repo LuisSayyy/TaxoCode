@@ -1,0 +1,59 @@
+0: start -> block
+1: block -> [KINGDOM] [LCURLY] stmt-list [RCURLY] [ENDKINGDOM]
+2: stmt_list -> stmt
+3: stmt-list -> stmt stmt_list
+4: stmt -> decl
+5: stmt -> assign 
+6: stmt -> cond 
+7: stmt -> loop 
+8: stmt -> read	 
+9: stmt -> write
+10: decl -> type vars [EOS]
+11: type -> [FISH] 
+12: type -> [REPTILE]
+13: type -> [INSECT] 
+14: type -> [KILLER]
+15: vars -> [ID] [COMMA] vars
+16: vars -> [ID]
+17: assign -> [ID] [IS] expr [EOS] 
+18: assign -> [CONSTANT] [ID] [IS] expr [EOS]
+19: cond -> [IF] [LPAREN] exprt [RPAREN] [LCURLY] stmt_list [RCURLY] [ELSE] [LCURLY] stmt_list [RCURLY]
+20: cond -> [IF] [LPAREN] exprt [RPAREN] [LCURLY] stmt_list [RCURLY]
+21: loop -> for_loop
+22: loop -> while_loop
+23: for_loop -> [REPRODUCE] [LPAREN] assign [UNTIL] exprt [WITH] [NUMCONST] [RPAREN] [LCURLY] stmt_list [RCURLY]
+24: while_loop -> [PROCREATE] [LPAREN] exprt [RPAREN] [LCURLY] stmt_list [RCURLY]
+25: read -> [INHALE] [LPAREN] [ID] [RPAREN] [EOS]
+26: write -> [EXHALE] [LPAREN] expr [RPAREN] [EOS]
+27: expr -> expr [CONCAT] exprt
+28: expr -> exprt
+29: exprt -> exprt [NOR] exprt1
+30: exprt -> exprt1
+31: exprt1 -> exprt1 [NAND] exprt2
+32: exprt1 -> exprt2
+33: exprt2 -> exprt2 [OR] exprt3
+34: exprt2 -> exprt3
+35: exprt3 -> exprt3 [AND] exprt4 
+36: exprt3 -> exprt4
+37: exprt4 -> [NOT] exprt4
+38: exprt4 -> exprt5
+39: exprt5 -> exprt5 [EQUALS] exprn 
+40: exprt5 -> exprt5 [NEQUALS] exprn
+41: exprt5 -> exprt5 [GTHAN] exprn
+42: exprt5 -> exprt5 [LTHAN] exprn
+43: exprt5 -> exprt5 [LETHAN] exprn
+44: exprt5 -> exprt5 [GETHAN] exprn
+45: exprt5 -> exprn
+46: exprn -> exprn [PLUS] exprnterm 
+47: exprn -> exprn [MINUS] exprnterm
+48: exprn -> exprnterm
+49: exprnterm -> exprnterm [MULT] exprnfactor
+50: exprnterm -> exprnfactor
+51: exprnfactor -> [LPAREN] expr [RPAREN]
+52: exprnfactor -> unit
+53: unit -> [ID] 
+54: unit -> [NUMCONST]
+55: unit -> [STRLIT]
+56: unit -> [CHARLIT]
+57: unit -> [PREDATOR]
+58: unit -> [PREY]
