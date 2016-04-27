@@ -13,6 +13,7 @@ public class Interpreter {
     public static String in2 = "";
     public static char in3 = ' ';
     public static boolean in4;
+    public static boolean cond = true;
     public static String avalue = "";
     public static int val;
     
@@ -71,11 +72,24 @@ public class Interpreter {
 //        System.out.println(assignment.token.lexeme);
         expr(assignment);
         id.token.value = avalue;
-        System.out.println("The value of " + id.token.lexeme + " is " + id.token.value);
+        //System.out.println("The value of " + id.token.lexeme + " is " + id.token.value);
     }
     
     public static void cond(kNode c){
-        
+        kNode ifelse = c.child;
+        kNode ifstmt = ifelse.next.next;
+        exprt(ifstmt);
+        ifstmt.token.value = Boolean.toString(cond);
+   //     System.out.println(ifstmt.token.value);
+   //     System.out.println(ifstmt.next.next.next.next.next.info);
+        if(ifstmt.token.value == "true"){
+            stmt_list(ifstmt.next.next.next);   
+        }
+   //    System.out.println(ifstmt.next.next.next.next.next.next.next.info);
+        if(ifstmt.next.next.next.next.next.info != null && ifstmt.token.value == "false"){
+            kNode elsestmt = ifstmt.next.next.next.next.next;
+            stmt_list(elsestmt.next.next);
+        }
     }
     
     public static void loop(kNode l){
@@ -87,8 +101,8 @@ public class Interpreter {
                 while_loop(l.child);
                 break;
         }
-    
     }
+    
     public static void read(kNode r){
         kNode input = r.child.next.next;
         //System.out.println(input.token.lexeme);
@@ -120,7 +134,6 @@ public class Interpreter {
         expr(output);
         id.token.value = avalue;
         System.out.println(id.token.value);
-        
     }
     
     public static void type(kNode t){
@@ -162,7 +175,10 @@ public class Interpreter {
         //System.out.println(expr.info);
         if(expr.info == "expr"){
             expr(expr);
+            expr.token.value = avalue;
             exprt(expr.next.next);
+            expr.next.next.token.value = avalue;
+            avalue = expr.token.value + expr.next.next.token.value;
         }
         else{
             exprt(expr);
@@ -231,7 +247,59 @@ public class Interpreter {
         kNode exprt5 = e5.child;
         if(exprt5.info == "exprt5"){
             exprt5(exprt5);
+            exprt5.token.value = avalue;
             exprn(exprt5.next.next);
+            exprt5.next.next.token.value = avalue;
+            switch(exprt5.next.info){
+                case "[EQUALS]":
+                    if(exprt5.token.value == exprt5.next.next.token.value){
+                        cond = true;
+                    }
+                    else{
+                        cond = false;
+                    }
+                    break;
+                case "[NEQUALS]":
+                    if(exprt5.token.value != exprt5.next.next.token.value){
+                        cond = true;
+                    }
+                    else{
+                        cond = false;
+                    }
+                    break;
+                case "[GTHAN]":
+                    if(Integer.parseInt(exprt5.token.value) > Integer.parseInt(exprt5.next.next.token.value)){
+                        cond = true;
+                    }
+                    else{
+                        cond = false;
+                    }
+                    break;
+                case "[LTHAN]":
+                    if(Integer.parseInt(exprt5.token.value) < Integer.parseInt(exprt5.next.next.token.value)){
+                        cond = true;
+                    }
+                    else{
+                        cond = false;
+                    }
+                    break;
+                case "[GETHAN]":
+                    if(Integer.parseInt(exprt5.token.value) >= Integer.parseInt(exprt5.next.next.token.value)){
+                        cond = true;
+                    }
+                    else{
+                        cond = false;
+                    }
+                    break;
+                case "[LETHAN]":
+                    if(Integer.parseInt(exprt5.token.value) <= Integer.parseInt(exprt5.next.next.token.value)){
+                        cond = true;
+                    }
+                    else{
+                        cond = false;
+                    }
+                    break;
+            }
         }
         else{
             exprn(exprt5);
@@ -246,7 +314,7 @@ public class Interpreter {
             exprn.token.value = avalue;
             exprnterm(exprn.next.next);
             exprn.next.next.token.value = avalue;
-            System.out.println("OP: " + exprn.next.info);
+            //System.out.println("OP: " + exprn.next.info);
             switch(exprn.next.info){
                 case "[PLUS]":
                     val = Integer.parseInt(exprn.token.value) + Integer.parseInt(exprn.next.next.token.value);
@@ -281,7 +349,8 @@ public class Interpreter {
     
     public static void exprnfactor(kNode enf){
         kNode exprnfactor = enf.child;
-        if(exprnfactor.info == "exprnfactor"){
+  //      System.out.println(exprnfactor.info);
+        if(exprnfactor.info == "[LPAREN]"){
             expr(exprnfactor.next);
         }
         else{
@@ -292,6 +361,8 @@ public class Interpreter {
     public static void unit(kNode u){
         kNode cons = u.child;
         Token tok = new Token(null, "");
+   //     System.out.println("Value:");
+   //     System.out.println(cons.token.lexeme);;
         switch(cons.info){
             case "[ID]":
                 tok = Parser.idTable.get(cons.token.lexeme);
@@ -304,8 +375,17 @@ public class Interpreter {
                     avalue = cons.token.value;
                 }
                 break;
-            case "[NUMCONST]":
             case "[STRLIT]":
+                tok.value = cons.token.lexeme;
+                if(tok.value != "" || tok.value != null){
+                    avalue = tok.value.replace("\"", "");
+                }
+                else{
+                    cons.token.value = cons.token.lexeme;
+                    avalue = cons.token.value.replace("\"", "");
+                }
+                break;
+            case "[NUMCONST]":
             case "[CHARLIT]":
             case "[PREDATOR]":
             case "[PREY]":
