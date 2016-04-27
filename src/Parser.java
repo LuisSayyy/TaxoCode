@@ -91,7 +91,7 @@ public class Parser {
     
     public static void main(String[] args) throws IOException, FileNotFoundException {
         Token tok = new Token(null, "");
-        LexAnalyzer lex = new LexAnalyzer("E:\\Paolo\\UST\\4th year\\2nd sem\\CS 105\\Sample Programs\\semantic.txt");
+        LexAnalyzer lex = new LexAnalyzer("E:\\Paolo\\UST\\4th year\\2nd sem\\CS 105\\Sample Programs\\Accepted Codes\\char.txt");
         lex.getTotalChar();
         System.out.println("-----Lexical Analyzer-----");
         do{
@@ -215,7 +215,7 @@ public class Parser {
         
         System.out.println("--------Semantics Analyzer-------");
             Interpreter.main(tree);
-        System.out.println("-----Semantics Analysis Complete----");
+        System.out.println("\n-----Semantics Analysis Complete----");
     }
     
     public static void action(String cell){ 

@@ -37,6 +37,7 @@ public class Interpreter {
     }
     
     public static void stmt(kNode s){
+       // System.out.println("Value: " + s.child.info);
         switch(s.child.info){
             case "decl":
                 decl(s.child);
@@ -69,6 +70,7 @@ public class Interpreter {
     public static void assign(kNode a){
         kNode id = a.child;
         kNode assignment = id.next.next;
+        Token tok;
 //        System.out.println(assignment.token.lexeme);
         expr(assignment);
         id.token.value = avalue;
@@ -85,8 +87,7 @@ public class Interpreter {
         if(ifstmt.token.value == "true"){
             stmt_list(ifstmt.next.next.next);   
         }
-   //    System.out.println(ifstmt.next.next.next.next.next.next.next.info);
-        if(ifstmt.next.next.next.next.next.info != null && ifstmt.token.value == "false"){
+        else if(ifstmt.next.next.next.next.next != null && ifstmt.token.value == "false"){
             kNode elsestmt = ifstmt.next.next.next.next.next;
             stmt_list(elsestmt.next.next);
         }
@@ -106,7 +107,7 @@ public class Interpreter {
     public static void read(kNode r){
         kNode input = r.child.next.next;
         //System.out.println(input.token.lexeme);
-        System.out.print("Input value for " + input.token.lexeme + ": ");
+        //System.out.print("Input value for " + input.token.lexeme + ": ");
         switch(input.token.dtype){
             case "FISH":
                 in1 = s.nextInt();
@@ -133,7 +134,7 @@ public class Interpreter {
         kNode output = w.child.next.next;
         expr(output);
         id.token.value = avalue;
-        System.out.println(id.token.value);
+        System.out.print(id.token.value);
     }
     
     public static void type(kNode t){
@@ -162,12 +163,33 @@ public class Interpreter {
         }
     }
     
-    public static void for_loop(kNode f){
+    public static void for_loop(kNode f){ //not done
+        kNode forloop = f.child;
+        int inc;
+        assign(forloop.next.next);
+        forloop.next.next.token.value = avalue;
+        exprt(forloop.next.next.next.next);
+        forloop.next.next.next.next.token.value = Boolean.toString(cond);
+        inc = Integer.parseInt(forloop.next.next.next.next.next.next.token.value);
+        while(forloop.next.next.token.value == "true"){
+            int val = Integer.parseInt(forloop.next.next.token.value);
+            val += inc;
+            stmt_list(forloop.next.next.next.next.next.next.next.next.next);
+        }
         
     }
     
-    public static void while_loop(kNode w){
+    public static void while_loop(kNode w){ //not done
+        kNode whileloop = w.child;
+        kNode whilestmt = whileloop.next.next;
         
+        exprt(whilestmt);
+        whilestmt.token.value = Boolean.toString(cond);
+    //    System.out.println(whilestmt.token.value);
+    //    System.out.println(whilestmt.next.next.next.info);
+        while(whilestmt.token.value == "true"){
+            stmt_list(whilestmt.next.next.next);
+        }
     }
     
     public static void expr(kNode e){
@@ -189,7 +211,15 @@ public class Interpreter {
         kNode exprt = et.child;
         if(exprt.info == "exprt"){
             exprt(exprt);
+            exprt.token.value = Boolean.toString(cond);
             exprt1(exprt.next.next);
+            exprt.next.next.token.value = Boolean.toString(cond);
+            if((!(Boolean.valueOf(exprt.token.value) || Boolean.valueOf(exprt.next.next.token.value))) == true){
+                cond = true;
+            }
+            else{
+                cond = false;
+            }
         }
         else{
             exprt1(exprt);
@@ -200,7 +230,15 @@ public class Interpreter {
         kNode exprt1 = e1.child;
         if(exprt1.info == "exprt1"){
             exprt1(exprt1);
+            exprt1.token.value = Boolean.toString(cond);
             exprt2(exprt1.next.next);
+            exprt1.next.next.token.value = Boolean.toString(cond);
+            if((!(Boolean.valueOf(exprt1.token.value) && Boolean.valueOf(exprt1.next.next.token.value))) == true){
+                cond = true;
+            }
+            else{
+                cond = false;
+            }
         }
         else{
             exprt2(exprt1);
@@ -211,7 +249,15 @@ public class Interpreter {
         kNode exprt2 = e2.child;
         if(exprt2.info == "exprt2"){
             exprt2(exprt2);
+            exprt2.token.value = Boolean.toString(cond);
             exprt3(exprt2.next.next);
+            exprt2.next.next.token.value = Boolean.toString(cond);
+            if((Boolean.valueOf(exprt2.token.value) || Boolean.valueOf(exprt2.next.next.token.value)) == true){
+                cond = true;
+            }
+            else{
+                cond = false;
+            }
         }
         else{
             exprt3(exprt2);
@@ -222,7 +268,15 @@ public class Interpreter {
         kNode exprt3 = e3.child;
         if(exprt3.info == "exprt3"){
             exprt3(exprt3);
+            exprt3.token.value = Boolean.toString(cond);
             exprt4(exprt3.next.next);
+            exprt3.next.next.token.value = Boolean.toString(cond);
+            if((Boolean.valueOf(exprt3.token.value) && Boolean.valueOf(exprt3.next.next.token.value)) == true){
+                cond = true;
+            }
+            else{
+                cond = false;
+            }
         }
         else{
             exprt4(exprt3);
@@ -231,12 +285,15 @@ public class Interpreter {
     
     public static void exprt4(kNode e4){
         kNode exprt4 = e4.child;
-        if(exprt4.info == "exprt4"){
-            exprt4(exprt4);
-            exprt5(exprt4.next.next);
-        }
-        else if(exprt4.info == "[NOT]"){
+        if(exprt4.info != "exprt5"){
             exprt4(exprt4.next);
+            exprt4.next.token.value = Boolean.toString(cond);
+            if(!Boolean.valueOf(exprt4.next.token.value)){
+                cond = true;
+            }
+            else{
+                cond = false;
+            }
         }
         else{
             exprt5(exprt4);
@@ -350,7 +407,7 @@ public class Interpreter {
     public static void exprnfactor(kNode enf){
         kNode exprnfactor = enf.child;
   //      System.out.println(exprnfactor.info);
-        if(exprnfactor.info == "[LPAREN]"){
+        if(exprnfactor.info != "unit"){
             expr(exprnfactor.next);
         }
         else{
